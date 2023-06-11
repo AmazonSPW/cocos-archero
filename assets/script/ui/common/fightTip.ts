@@ -1,8 +1,8 @@
-import { poolManager } from './../../framework/poolManager';
-import { constant } from './../../framework/constant';
-import { LabelComponent, tween, Vec3, UITransformComponent, view, _decorator, Component, Node, find  } from 'cc';
-import { util } from '../../framework/util';
+import { Component, LabelComponent, Node, UITransformComponent, Vec3, _decorator, find, screen, tween } from 'cc';
 import { GameManager } from '../../fight/gameManager';
+import { util } from '../../framework/util';
+import { constant } from './../../framework/constant';
+import { poolManager } from './../../framework/poolManager';
 //战斗血量增减提示组件
 const { ccclass, property } = _decorator;
 
@@ -15,13 +15,13 @@ export class FightTip extends Component {
     private _isChangePos: boolean = false;//是否改变位置
     private _targetPos: Vec3 = new Vec3(0, 200, 0);//目标位置
     private _oriWorPos: Vec3 = new Vec3();//初始位置
-    private _curWorPos: Vec3  = new Vec3();//当前位置
+    private _curWorPos: Vec3 = new Vec3();//当前位置
     private _oriScale: Vec3 = new Vec3(0.7, 0.7, 0.7);//初始缩放
     private _oriAngle: Vec3 = new Vec3();//初始角度
     private _scale_1: Vec3 = new Vec3(1, 1, 1);//最开始缩放
     private _scale_2: Vec3 = new Vec3();//最终缩放
 
-    start () {
+    start() {
         // Your initialization goes here.
     }
 
@@ -34,24 +34,24 @@ export class FightTip extends Component {
      * @param {Function} [callback] 回调函数
      * @memberof FightTip
      */
-    public show (scriptParent: any, tipType: number, bloodNum: number, callback?: Function) {
+    public show(scriptParent: any, tipType: number, bloodNum: number, callback?: Function) {
         this._closeTweenTip();
         this.node.eulerAngles = this._oriAngle;
         this.node.setScale(this._oriScale);
-        
+
         this._isChangePos = false;
 
         this._oriWorPos.set(scriptParent.node.worldPosition);
 
         let arrChildren = this.node.children;
-        arrChildren.forEach((item)=>{
+        arrChildren.forEach((item) => {
             item.active = false;
         })
 
 
         // let UICom = this.node.getComponent(UITransformComponent) as UITransformComponent;
         // UICom.priority = constant.PRIORITY.BLOOD_TIP;
-        
+
         this.node.setSiblingIndex(constant.PRIORITY.BLOOD_TIP);
 
         bloodNum = Math.round(bloodNum);
@@ -74,15 +74,15 @@ export class FightTip extends Component {
         ndSub.active = true;
 
         let pos = this.node.getPosition();
-        let width:number = ndSub.getComponent(UITransformComponent)?.width!;
-        let height:number = ndSub.getComponent(UITransformComponent)?.height!;
-        if ((Math.abs(pos.x) + width / 2) > view.getCanvasSize().width / 2) {
-            let w = view.getCanvasSize().width / 2 - width / 2;
+        let width: number = ndSub.getComponent(UITransformComponent)?.width!;
+        let height: number = ndSub.getComponent(UITransformComponent)?.height!;
+        if ((Math.abs(pos.x) + width / 2) > screen.windowSize.width / 2) {
+            let w = screen.windowSize.width / 2 - width / 2;
             pos.x = pos.x > 0 ? w : -w;
         }
 
-        if ((Math.abs(pos.y) + height / 2) > view.getCanvasSize().height / 2) {
-            let h = view.getCanvasSize().height / 2 - height / 2;
+        if ((Math.abs(pos.y) + height / 2) > screen.windowSize.height / 2) {
+            let h = screen.windowSize.height / 2 - height / 2;
             pos.y = pos.y > 0 ? h : -h;
         }
         this.node.setPosition(pos);
@@ -92,25 +92,25 @@ export class FightTip extends Component {
         this._isChangePos = true;
 
         this._tweenTip = tween(this.node)
-        .to(this._costTime * 0.4, {scale: this._scale_1}, {easing: 'smooth'})
-        .to(this._costTime * 0.2, {scale: this._scale_2}, {easing: "backIn"})
-        .call(()=>{
-            this._closeTweenTip();
-            poolManager.instance.putNode(this.node);
-            callback && callback();
-            this._isChangePos = false;
-        })
-        .start();
+            .to(this._costTime * 0.4, { scale: this._scale_1 }, { easing: 'smooth' })
+            .to(this._costTime * 0.2, { scale: this._scale_2 }, { easing: "backIn" })
+            .call(() => {
+                this._closeTweenTip();
+                poolManager.instance.putNode(this.node);
+                callback && callback();
+                this._isChangePos = false;
+            })
+            .start();
     }
 
     /**
      * 获取跟上次血量提示不一样方向的提示
      */
-    private getTargetPos (scriptParent: any) {
+    private getTargetPos(scriptParent: any) {
         let dir: number;
         let arr = this._arrDirection.concat();
-        
-        arr = arr.filter((item: any)=>{
+
+        arr = arr.filter((item: any) => {
             return item !== scriptParent.bloodTipDirection;
         });
 
@@ -128,20 +128,20 @@ export class FightTip extends Component {
             default:
                 break;
         }
-        
+
         this._targetPos.add(scriptParent.node.worldPosition.clone());
 
         scriptParent.bloodTipDirection = dir;
     }
 
-    private _closeTweenTip () {
+    private _closeTweenTip() {
         if (this._tweenTip) {
             this._tweenTip.stop();
-            this._tweenTip = null;  
+            this._tweenTip = null;
         }
     }
 
-    update (deltaTime: number) {
+    update(deltaTime: number) {
         // Your update function goes here.
 
         if (this._isChangePos) {

@@ -77,5 +77,33 @@
     "near2D": 1,
     "wheelSpeed2D": 6,
     "size": "__default_design__"
+  },
+  "float-window": {
+    "position": {
+      "cc": {
+        "Camera": {
+          "dock": false,
+          "top": null,
+          "bottom": 10,
+          "left": null,
+          "right": 10
+        },
+        "ParticleSystem": {
+          "dock": false,
+          "top": null,
+          "bottom": 10,
+          "left": null,
+          "right": 10
+        }
+      }
+    }
+  },
+  "game-view": {
+    "devicesInfo": {
+      "name": "16:9",
+      "type": "ratio",
+      "width": 16,
+      "height": 9
+    }
   }
 }

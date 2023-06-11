@@ -93,7 +93,11 @@ export class AudioManager {
             tmp.loop = loop;
             tmp.isMusic = true;
             this.audios[name] = tmp;
-            this.playClip(name, true);
+            // this.playClip(name, true);
+
+            this._audioSource.clip = clip;
+            this._audioSource.loop = loop;
+            this._audioSource.play();
         });
     }
 
@@ -125,9 +129,13 @@ export class AudioManager {
                 clip.setLoop(loop);
             }
 
-            clip.setVolume(this.soundVolume);
+            // clip.setVolume(this.soundVolume);
 
-            clip.playOneShot();
+            // clip.playOneShot();
+            // this._audioSource.clip = clip;
+            // this._audioSource.loop = loop;
+            this._audioSource.playOneShot(clip);
+
 
             clip.once('ended', () => {
                 lodash.remove(this.arrSound, (obj: any) => {
@@ -151,9 +159,9 @@ export class AudioManager {
         }
 
         let clip = audio.clip as AudioClip;
-        clip.setVolume(volume);
-        clip.setLoop(audio.loop);
-        clip.play();
+        // clip.setVolume(volume);
+        // clip.setLoop(audio.loop);
+        // clip.play();
         // let audioId = cc.audioEngine.play(audio.clip, audio.loop, volume);
         // audio.audioId = audioId;
     }
